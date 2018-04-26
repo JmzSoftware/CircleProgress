@@ -29,7 +29,7 @@ public class DonutProgress extends View {
     private RectF finishedOuterRect = new RectF();
     private RectF unfinishedOuterRect = new RectF();
 
-    private int attributeResourceId = 0;
+    private Bitmap attributeResourceId;
     private boolean showText;
     private float textSize;
     private int textColor;
@@ -138,7 +138,7 @@ public class DonutProgress extends View {
         finishedStrokeColor = attributes.getColor(R.styleable.DonutProgress_donut_finished_color, default_finished_color);
         unfinishedStrokeColor = attributes.getColor(R.styleable.DonutProgress_donut_unfinished_color, default_unfinished_color);
         showText = attributes.getBoolean(R.styleable.DonutProgress_donut_show_text, true);
-        attributeResourceId = attributes.getResourceId(R.styleable.DonutProgress_donut_inner_drawable, 0);
+//        attributeResourceId = attributes.getResourceId(R.styleable.DonutProgress_donut_inner_drawable, 0);
 
         setMax(attributes.getInt(R.styleable.DonutProgress_donut_max, default_max));
         setProgress(attributes.getFloat(R.styleable.DonutProgress_donut_progress, 0));
@@ -211,7 +211,7 @@ public class DonutProgress extends View {
         return progress;
     }
 
-    public void setInnerDrawable(int attributeResourceId) {
+    public void setInnerDrawable(Bitmap attributeResourceId) {
         this.attributeResourceId = attributeResourceId;
         invalidate();
     }
@@ -345,11 +345,11 @@ public class DonutProgress extends View {
         this.invalidate();
     }
 
-    public int getAttributeResourceId() {
+    public Bitmap getAttributeResourceId() {
         return attributeResourceId;
     }
 
-    public void setAttributeResourceId(int attributeResourceId) {
+    public void setAttributeResourceId(Bitmap attributeResourceId) {
         this.attributeResourceId = attributeResourceId;
     }
 
@@ -409,9 +409,8 @@ public class DonutProgress extends View {
             }
         }
 
-        if (attributeResourceId != 0) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), attributeResourceId);
-            canvas.drawBitmap(bitmap, (getWidth() - bitmap.getWidth()) / 2.0f, (getHeight() - bitmap.getHeight()) / 2.0f, null);
+        if (attributeResourceId != null) {
+            canvas.drawBitmap(attributeResourceId, (getWidth() - attributeResourceId.getWidth()) / 2.0f, (getHeight() - attributeResourceId.getHeight()) / 2.0f, null);
         }
     }
 
@@ -436,7 +435,7 @@ public class DonutProgress extends View {
         bundle.putFloat(INSTANCE_FINISHED_STROKE_WIDTH, getFinishedStrokeWidth());
         bundle.putFloat(INSTANCE_UNFINISHED_STROKE_WIDTH, getUnfinishedStrokeWidth());
         bundle.putInt(INSTANCE_BACKGROUND_COLOR, getInnerBackgroundColor());
-        bundle.putInt(INSTANCE_INNER_DRAWABLE, getAttributeResourceId());
+        bundle.putBitmap(INSTANCE_INNER_DRAWABLE, getAttributeResourceId());
         return bundle;
     }
 
