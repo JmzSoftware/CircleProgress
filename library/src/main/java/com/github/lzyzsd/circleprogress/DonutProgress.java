@@ -14,6 +14,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Created by bruce on 14-10-30.
@@ -29,7 +30,7 @@ public class DonutProgress extends View {
     private RectF finishedOuterRect = new RectF();
     private RectF unfinishedOuterRect = new RectF();
 
-    private int attributeResourceId = 0;
+    private Bitmap attributeResourceId;
     private boolean showText;
     private float textSize;
     private int textColor;
@@ -138,7 +139,7 @@ public class DonutProgress extends View {
         finishedStrokeColor = attributes.getColor(R.styleable.DonutProgress_donut_finished_color, default_finished_color);
         unfinishedStrokeColor = attributes.getColor(R.styleable.DonutProgress_donut_unfinished_color, default_unfinished_color);
         showText = attributes.getBoolean(R.styleable.DonutProgress_donut_show_text, true);
-        attributeResourceId = attributes.getResourceId(R.styleable.DonutProgress_donut_inner_drawable, 0);
+//        attributeResourceId = attributes.getResourceId(R.styleable.DonutProgress_donut_inner_drawable, 0);
 
         setMax(attributes.getInt(R.styleable.DonutProgress_donut_max, default_max));
         setProgress(attributes.getFloat(R.styleable.DonutProgress_donut_progress, 0));
@@ -211,6 +212,11 @@ public class DonutProgress extends View {
         return progress;
     }
 
+    public void setInnerDrawable(Bitmap attributeResourceId) {
+        this.attributeResourceId = attributeResourceId;
+        invalidate();
+    }
+    
     public void setProgress(float progress) {
         this.progress = progress;
         if (this.progress > getMax()) {
@@ -340,11 +346,11 @@ public class DonutProgress extends View {
         this.invalidate();
     }
 
-    public int getAttributeResourceId() {
+    public Bitmap getAttributeResourceId() {
         return attributeResourceId;
     }
 
-    public void setAttributeResourceId(int attributeResourceId) {
+    public void setAttributeResourceId(Bitmap attributeResourceId) {
         this.attributeResourceId = attributeResourceId;
     }
 
@@ -404,14 +410,17 @@ public class DonutProgress extends View {
             }
         }
 
-        if (attributeResourceId != 0) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), attributeResourceId);
-            canvas.drawBitmap(bitmap, (getWidth() - bitmap.getWidth()) / 2.0f, (getHeight() - bitmap.getHeight()) / 2.0f, null);
+        if (attributeResourceId != null) {
+            canvas.drawBitmap(attributeResourceId, (getWidth() - attributeResourceId.getWidth()) / 2.0f, (getHeight() - attributeResourceId.getHeight()) / 2.0f, null);
         }
     }
 
     @Override
     protected Parcelable onSaveInstanceState() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        getAttributeResourceId().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
         final Bundle bundle = new Bundle();
         bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState());
         bundle.putInt(INSTANCE_TEXT_COLOR, getTextColor());
@@ -431,7 +440,7 @@ public class DonutProgress extends View {
         bundle.putFloat(INSTANCE_FINISHED_STROKE_WIDTH, getFinishedStrokeWidth());
         bundle.putFloat(INSTANCE_UNFINISHED_STROKE_WIDTH, getUnfinishedStrokeWidth());
         bundle.putInt(INSTANCE_BACKGROUND_COLOR, getInnerBackgroundColor());
-        bundle.putInt(INSTANCE_INNER_DRAWABLE, getAttributeResourceId());
+        bundle.putByteArray(INSTANCE_INNER_DRAWABLE, byteArray);
         return bundle;
     }
 
@@ -449,7 +458,8 @@ public class DonutProgress extends View {
             finishedStrokeWidth = bundle.getFloat(INSTANCE_FINISHED_STROKE_WIDTH);
             unfinishedStrokeWidth = bundle.getFloat(INSTANCE_UNFINISHED_STROKE_WIDTH);
             innerBackgroundColor = bundle.getInt(INSTANCE_BACKGROUND_COLOR);
-            attributeResourceId = bundle.getInt(INSTANCE_INNER_DRAWABLE);
+            byte[] byteArray = bundle.getByteArray(INSTANCE_INNER_DRAWABLE);
+            attributeResourceId = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             initPainters();
             setMax(bundle.getInt(INSTANCE_MAX));
             setStartingDegree(bundle.getInt(INSTANCE_STARTING_DEGREE));
