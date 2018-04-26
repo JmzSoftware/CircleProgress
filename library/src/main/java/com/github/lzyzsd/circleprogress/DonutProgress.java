@@ -49,7 +49,7 @@ public class DonutProgress extends View {
     private float innerBottomTextSize;
     private String innerBottomText;
     private float innerBottomTextHeight;
-ads
+
     private final float default_stroke_width;
     private final int default_finished_color = Color.rgb(66, 145, 241);
     private final int default_unfinished_color = Color.rgb(204, 204, 204);
