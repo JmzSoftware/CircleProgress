@@ -453,7 +453,7 @@ public class DonutProgress extends View {
             finishedStrokeWidth = bundle.getFloat(INSTANCE_FINISHED_STROKE_WIDTH);
             unfinishedStrokeWidth = bundle.getFloat(INSTANCE_UNFINISHED_STROKE_WIDTH);
             innerBackgroundColor = bundle.getInt(INSTANCE_BACKGROUND_COLOR);
-            attributeResourceId = bundle.getInt(INSTANCE_INNER_DRAWABLE);
+            attributeResourceId = bundle.getBitmap(INSTANCE_INNER_DRAWABLE);
             initPainters();
             setMax(bundle.getInt(INSTANCE_MAX));
             setStartingDegree(bundle.getInt(INSTANCE_STARTING_DEGREE));
