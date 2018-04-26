@@ -211,6 +211,11 @@ public class DonutProgress extends View {
         return progress;
     }
 
+    public void setInnerDrawable(int attributeResourceId) {
+        this.attributeResourceId = attributeResourceId;
+        invalidate();
+    }
+    
     public void setProgress(float progress) {
         this.progress = progress;
         if (this.progress > getMax()) {
