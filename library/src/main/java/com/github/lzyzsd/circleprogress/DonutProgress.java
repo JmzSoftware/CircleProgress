@@ -416,6 +416,10 @@ public class DonutProgress extends View {
 
     @Override
     protected Parcelable onSaveInstanceState() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        getAttributeResourceId().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
         final Bundle bundle = new Bundle();
         bundle.putParcelable(INSTANCE_STATE, super.onSaveInstanceState());
         bundle.putInt(INSTANCE_TEXT_COLOR, getTextColor());
@@ -435,7 +439,7 @@ public class DonutProgress extends View {
         bundle.putFloat(INSTANCE_FINISHED_STROKE_WIDTH, getFinishedStrokeWidth());
         bundle.putFloat(INSTANCE_UNFINISHED_STROKE_WIDTH, getUnfinishedStrokeWidth());
         bundle.putInt(INSTANCE_BACKGROUND_COLOR, getInnerBackgroundColor());
-        bundle.putBitmap(INSTANCE_INNER_DRAWABLE, getAttributeResourceId());
+        bundle.putByteArray(INSTANCE_INNER_DRAWABLE, byteArray);
         return bundle;
     }
 
@@ -453,7 +457,8 @@ public class DonutProgress extends View {
             finishedStrokeWidth = bundle.getFloat(INSTANCE_FINISHED_STROKE_WIDTH);
             unfinishedStrokeWidth = bundle.getFloat(INSTANCE_UNFINISHED_STROKE_WIDTH);
             innerBackgroundColor = bundle.getInt(INSTANCE_BACKGROUND_COLOR);
-            attributeResourceId = bundle.getBitmap(INSTANCE_INNER_DRAWABLE);
+            byte[] byteArray = bundle.getByteArray(INSTANCE_INNER_DRAWABLE);
+            attributeResourceId = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             initPainters();
             setMax(bundle.getInt(INSTANCE_MAX));
             setStartingDegree(bundle.getInt(INSTANCE_STARTING_DEGREE));
